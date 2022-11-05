@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  mysql:
+    image: mariadb:10.8.2
+    container_name: "server-mariadb"
+    volumes:
+      - ./mariadb/data:/var/lib/mysql
+      - ./mariadb/logs:/var/log/mysql
+      - ./mariadb/conf:/etc/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    restart: always
+    networks:
+      - bridge
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: "server-phpmyadmin"
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=root
+    links:
+      - mysql
+    restart: always
+    networks:
+      - bridge
+
+networks:
+  bridge:
+    driver: bridge
+
